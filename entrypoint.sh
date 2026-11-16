@@ -7,4 +7,10 @@ echo "✅ Sinisimulan ang Xray..."
 sleep 2
 
 echo "✅ Sinisimulan ang Envoy Proxy..."
-exec /usr/local/bin/envoy -c /etc/envoy/envoy.yaml --service-cluster proxy
+/usr/local/bin/envoy -c /etc/envoy/envoy.yaml --service-cluster proxy &
+
+sleep 2
+
+echo "✅ Sinisimulan ang Web Panel (index.html)..."
+# I-serve ang index.html gamit ang Python server sa port 8080
+python3 -m http.server 8080 --directory /var/www/html
