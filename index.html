@@ -8,14 +8,14 @@
     <style>
         :root {
             --bg-color: #090a0f;
-            --panel-bg: #12141c;
-            --panel-border: rgba(255, 255, 255, 0.08);
+            --panel-bg: transparent;
+            --panel-border: rgba(255, 255, 255, 0.25);
             --primary: #38bdf8;
-            --primary-glow: rgba(56, 189, 248, 0.15);
+            --primary-glow: rgba(56, 189, 248, 0.2);
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-muted: #cbd5e1;
             --success: #10b981;
-            --success-glow: rgba(16, 185, 129, 0.15);
+            --success-glow: rgba(16, 185, 129, 0.2);
         }
 
         * {
@@ -33,6 +33,20 @@
             justify-content: center;
             align-items: center;
             padding: 16px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Video Styling */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.6);
         }
 
         /* Loading Screen Styling */
@@ -42,7 +56,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--bg-color);
+            background-color: #090a0f;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -92,10 +106,10 @@
         .container {
             width: 100%;
             max-width: 820px;
-            background: var(--panel-bg);
+            background: transparent;
             border: 1px solid var(--panel-border);
             border-radius: 16px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(56, 189, 248, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             position: relative;
             opacity: 0;
@@ -108,7 +122,6 @@
             transform: translateY(0);
         }
 
-        /* Gumagalaw na Rainbow Glow sa Taas at Ilalim */
         .container::before {
             content: '';
             position: absolute;
@@ -119,7 +132,7 @@
             background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
             background-size: 400% 100%;
             animation: rainbowGlow 6s linear infinite;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            z-index: 2;
         }
 
         .container::after {
@@ -132,7 +145,7 @@
             background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
             background-size: 400% 100%;
             animation: rainbowGlow 6s linear infinite;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            z-index: 2;
         }
 
         @keyframes rainbowGlow {
@@ -144,9 +157,10 @@
             padding: 20px 24px 16px;
             border-bottom: 1px solid var(--panel-border);
             display: flex;
-            flex-direction: column; /* Ginawang column para maayos ang pag-stack */
+            flex-direction: column;
             align-items: flex-start;
             gap: 10px;
+            background: transparent;
         }
 
         .header-top {
@@ -192,8 +206,8 @@
             align-items: center;
             gap: 6px;
             padding: 4px 12px;
-            background: var(--success-glow);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: transparent;
+            border: 1px solid rgba(16, 185, 129, 0.6);
             border-radius: 20px;
             font-size: 0.7rem;
             font-weight: 600;
@@ -243,7 +257,7 @@
         }
 
         .info-card {
-            background: rgba(255, 255, 255, 0.02);
+            background: transparent;
             border: 1px solid var(--panel-border);
             padding: 12px 14px;
             border-radius: 10px;
@@ -266,48 +280,92 @@
 
         .selector-section {
             margin-bottom: 14px;
+            position: relative;
         }
 
-        .custom-select {
+        /* 100% Transparent Custom Dropdown List Style */
+        .custom-dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+        .dropdown-selected {
             width: 100%;
             padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.02);
+            background: transparent;
             border: 1px solid var(--panel-border);
             border-radius: 10px;
             color: #fff;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem;
             font-weight: 600;
-            outline: none;
             cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            background-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             transition: all 0.2s ease;
         }
 
-        .custom-select:hover {
-            border-color: rgba(56, 189, 248, 0.4);
-            background-color: rgba(255, 255, 255, 0.04);
+        .dropdown-selected:hover {
+            border-color: rgba(56, 189, 248, 0.8);
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .custom-select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px var(--primary-glow);
+        .dropdown-list {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            width: 100%;
+            max-height: 220px;
+            overflow-y: auto;
+            background: transparent;
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
         }
 
-        .custom-select option {
-            background-color: #12141c;
+        .dropdown-list.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
             color: #f8fafc;
-            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            background: transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(56, 189, 248, 0.25);
+        }
+
+        .dropdown-item::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--panel-border);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dropdown-item.selected::after {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            box-shadow: 0 0 6px var(--primary);
         }
 
         .link-card {
-            background: rgba(255, 255, 255, 0.015);
+            background: transparent;
             border: 1px solid var(--panel-border);
             padding: 10px 14px;
             border-radius: 10px;
@@ -320,7 +378,7 @@
         }
 
         .link-card:hover {
-            border-color: rgba(56, 189, 248, 0.3);
+            border-color: rgba(56, 189, 248, 0.7);
         }
 
         .link-info {
@@ -345,8 +403,8 @@
         }
 
         .btn {
-            background: var(--primary-glow);
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            background: transparent;
+            border: 1px solid rgba(56, 189, 248, 0.5);
             color: var(--primary);
             padding: 6px 12px;
             border-radius: 6px;
@@ -364,8 +422,8 @@
         }
 
         .notice-box {
-            background: rgba(56, 189, 248, 0.03);
-            border: 1px dashed rgba(56, 189, 248, 0.2);
+            background: transparent;
+            border: 1px dashed rgba(56, 189, 248, 0.4);
             padding: 10px 14px;
             border-radius: 10px;
             margin-top: 14px;
@@ -388,7 +446,7 @@
 
         .footer {
             padding: 14px 24px;
-            background: rgba(0, 0, 0, 0.2);
+            background: transparent;
             border-top: 1px solid var(--panel-border);
             display: flex;
             justify-content: space-between;
@@ -405,14 +463,14 @@
             bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            background: #1e293b;
+            background: rgba(0, 0, 0, 0.8);
             color: #fff;
             border: 1px solid var(--primary);
             padding: 8px 18px;
             border-radius: 20px;
             font-size: 0.75rem;
             font-family: 'JetBrains Mono', monospace;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             z-index: 1000;
             opacity: 0;
             transition: opacity 0.3s, visibility 0.3s;
@@ -425,6 +483,12 @@
     </style>
 </head>
 <body>
+
+    <!-- Background Video from Dropbox -->
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="https://www.dropbox.com/scl/fi/5dlk7b7yzwuo157mugd3b/ssstik.io_1794830294163.mp4?rlkey=les66ys6ts8oj7nzfd1cjm4th&st=jsdtp07j&dl=1" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
 
     <!-- Loading Screen -->
     <div id="loader">
@@ -462,12 +526,24 @@
             <div class="grid-2">
                 <div class="selector-section">
                     <div class="section-title">🔌 Bug Host / Address</div>
-                    <select id="address-select" class="custom-select" onchange="updateSelection()"></select>
+                    <div class="custom-dropdown" id="address-dropdown">
+                        <div class="dropdown-selected" onclick="toggleDropdown('address')">
+                            <span id="address-selected-text">Select Address</span>
+                            <span>▼</span>
+                        </div>
+                        <div class="dropdown-list" id="address-list"></div>
+                    </div>
                 </div>
 
                 <div class="selector-section">
                     <div class="section-title">🛡️ SNI / Server Name Indicator</div>
-                    <select id="sni-select" class="custom-select" onchange="updateSelection()"></select>
+                    <div class="custom-dropdown" id="sni-dropdown">
+                        <div class="dropdown-selected" onclick="toggleDropdown('sni')">
+                            <span id="sni-selected-text">Select SNI</span>
+                            <span>▼</span>
+                        </div>
+                        <div class="dropdown-list" id="sni-list"></div>
+                    </div>
                 </div>
             </div>
 
@@ -529,6 +605,9 @@
             "tiktok.surf2sawa.org", "tiktok.com", "www.tiktok.com", "m.tiktok.com"
         ];
 
+        let selectedAddressValue = addresses[0];
+        let selectedSniValue = snis[0];
+
         function showToast(message) {
             const toast = document.getElementById("toast");
             toast.innerText = message;
@@ -537,46 +616,84 @@
         }
 
         function initDropdowns() {
-            const addrSelect = document.getElementById('address-select');
+            const addrList = document.getElementById('address-list');
+            document.getElementById('address-selected-text').innerText = selectedAddressValue;
+            
             addresses.forEach(addr => {
-                const opt = document.createElement('option');
-                opt.value = addr;
-                opt.innerText = addr;
-                addrSelect.appendChild(opt);
+                const item = document.createElement('div');
+                item.className = 'dropdown-item' + (addr === selectedAddressValue ? ' selected' : '');
+                item.innerText = addr;
+                item.onclick = () => {
+                    selectedAddressValue = addr;
+                    document.getElementById('address-selected-text').innerText = addr;
+                    document.getElementById('address-list').classList.remove('show');
+                    
+                    addrList.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('selected'));
+                    item.classList.add('selected');
+
+                    generateLinks();
+                };
+                addrList.appendChild(item);
             });
 
-            const sniSelect = document.getElementById('sni-select');
+            const sniList = document.getElementById('sni-list');
+            document.getElementById('sni-selected-text').innerText = selectedSniValue;
+            
             snis.forEach(s => {
-                const opt = document.createElement('option');
-                opt.value = s;
-                opt.innerText = s;
-                sniSelect.appendChild(opt);
+                const item = document.createElement('div');
+                item.className = 'dropdown-item' + (s === selectedSniValue ? ' selected' : '');
+                item.innerText = s;
+                item.onclick = () => {
+                    selectedSniValue = s;
+                    document.getElementById('sni-selected-text').innerText = s;
+                    document.getElementById('sni-list').classList.remove('show');
+                    
+                    sniList.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('selected'));
+                    item.classList.add('selected');
+
+                    generateLinks();
+                };
+                sniList.appendChild(item);
             });
         }
 
-        function updateSelection() {
-            generateLinks();
+        function toggleDropdown(type) {
+            const addrList = document.getElementById('address-list');
+            const sniList = document.getElementById('sni-list');
+
+            if (type === 'address') {
+                addrList.classList.toggle('show');
+                sniList.classList.remove('show');
+            } else {
+                sniList.classList.toggle('show');
+                addrList.classList.remove('show');
+            }
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.custom-dropdown')) {
+                document.getElementById('address-list').classList.remove('show');
+                document.getElementById('sni-list').classList.remove('show');
+            }
         }
 
         function generateLinks() {
-            const selectedAddress = document.getElementById('address-select').value;
-            const selectedSni = document.getElementById('sni-select').value;
             const linksContainer = document.getElementById('links-container');
             linksContainer.innerHTML = '';
 
-            const vless = `vless://${uuid}@${selectedAddress}:443?encryption=none&type=ws&path=/vless-ws&host=${host}&security=tls&sni=${selectedSni}#VLESS-WS-ENVOY`;
+            const vless = `vless://${uuid}@${selectedAddressValue}:443?encryption=none&type=ws&path=/vless-ws&host=${host}&security=tls&sni=${selectedSniValue}#VLESS-WS-ENVOY`;
             
             const vmessJson = JSON.stringify({
-                v: "2", ps: "VMESS-WS-ENVOY", add: selectedAddress, port: "443",
+                v: "2", ps: "VMESS-WS-ENVOY", add: selectedAddressValue, port: "443",
                 id: uuid, aid: "0", scy: "auto", net: "ws", type: "none",
-                host: host, path: "/vmess-ws", tls: "tls", sni: selectedSni, fp: "chrome", alpn: "http/1.1"
+                host: host, path: "/vmess-ws", tls: "tls", sni: selectedSniValue, fp: "chrome", alpn: "http/1.1"
             });
             const vmess = `vmess://${btoa(vmessJson)}`;
 
-            const trojan = `trojan://${password}@${selectedAddress}:443?type=ws&path=/trojan-ws&host=${host}&security=tls&sni=${selectedSni}#TROJAN-WS-ENVOY`;
+            const trojan = `trojan://${password}@${selectedAddressValue}:443?type=ws&path=/trojan-ws&host=${host}&security=tls&sni=${selectedSniValue}#TROJAN-WS-ENVOY`;
             
             const ssBtoa = btoa(`aes-256-gcm:${password}`);
-            const ss = `ss://${ssBtoa}@${selectedAddress}:443?type=ws&path=/ss-ws&host=${host}&security=tls&sni=${selectedSni}#SS-WS-ENVOY`;
+            const ss = `ss://${ssBtoa}@${selectedAddressValue}:443?type=ws&path=/ss-ws&host=${host}&security=tls&sni=${selectedSniValue}#SS-WS-ENVOY`;
 
             const links = [
                 { name: "VLESS WS", url: vless },
