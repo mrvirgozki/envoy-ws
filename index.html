@@ -91,7 +91,7 @@
 
         .container {
             width: 100%;
-            max-width: 820px; /* Mas pinababa ang lapad para compact */
+            max-width: 820px;
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
             border-radius: 16px;
@@ -141,19 +141,27 @@
         }
 
         .header {
-            padding: 20px 24px 16px; /* Binawasan ang padding */
+            padding: 20px 24px 16px;
             border-bottom: 1px solid var(--panel-border);
+            display: flex;
+            flex-direction: column; /* Ginawang column para maayos ang pag-stack */
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .header-top {
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
             flex-wrap: wrap;
-            gap: 12px;
         }
 
         .brand h1 {
-            font-size: 1.3rem; /* Medyo liit ang font */
+            font-size: 1.15rem;
             font-weight: 800;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             font-family: 'JetBrains Mono', monospace;
             background: linear-gradient(90deg, #38bdf8, #a855f7, #ec4899, #eab308, #10b981, #38bdf8);
             background-size: 300% auto;
@@ -176,13 +184,14 @@
             color: var(--text-muted);
             margin-top: 2px;
             font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
         }
 
         .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 10px;
+            padding: 4px 12px;
             background: var(--success-glow);
             border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 20px;
@@ -208,7 +217,7 @@
         }
 
         .content {
-            padding: 20px 24px; /* Binawasan ang padding sa loob */
+            padding: 20px 24px;
         }
 
         .section-title {
@@ -223,7 +232,7 @@
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px; /* Mas pinadikit ang pagitan */
+            gap: 14px;
             margin-bottom: 16px;
         }
 
@@ -425,9 +434,11 @@
 
     <div class="container" id="main-container">
         <div class="header">
-            <div class="brand">
-                <h1>⚡ VIRGOZKI CONFIG PANEL ⚡</h1>
-                <p>ENVOY PROXY ENTERPRISE GATEWAY</p>
+            <div class="header-top">
+                <div class="brand">
+                    <h1>⚡ VIRGOZKI CONFIG PANEL ⚡</h1>
+                    <p>ENVOY PROXY ENTERPRISE GATEWAY</p>
+                </div>
             </div>
             <div class="status-badge">
                 <div class="status-dot"></div>
