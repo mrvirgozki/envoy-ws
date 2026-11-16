@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virgozki Networks • Enterprise Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #090a0f;
+            --panel-bg: #12141c;
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --primary: #38bdf8;
+            --primary-glow: rgba(56, 189, 248, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        /* Loading Screen Styling */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease;
+        }
+
+        .spinner {
+            width: 55px;
+            height: 55px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #38bdf8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite, rainbowBorder 4s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes rainbowBorder {
+            0% { border-top-color: #ff0000; }
+            20% { border-top-color: #ffff00; }
+            40% { border-top-color: #00ff00; }
+            60% { border-top-color: #00ffff; }
+            80% { border-top-color: #8b00ff; }
+            100% { border-top-color: #ff0000; }
+        }
+
+        .loader-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #38bdf8, #a855f7, #ec4899, #eab308, #10b981, #38bdf8);
+            background-size: 300% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textRainbow 4s linear infinite;
+            text-align: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px; /* Mas pinababa ang lapad para compact */
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(56, 189, 248, 0.1);
+            overflow: hidden;
+            position: relative;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Gumagalaw na Rainbow Glow sa Taas at Ilalim */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+            background-size: 400% 100%;
+            animation: rainbowGlow 6s linear infinite;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+            background-size: 400% 100%;
+            animation: rainbowGlow 6s linear infinite;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes rainbowGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+
+        .header {
+            padding: 20px 24px 16px; /* Binawasan ang padding */
+            border-bottom: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .brand h1 {
+            font-size: 1.3rem; /* Medyo liit ang font */
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(90deg, #38bdf8, #a855f7, #ec4899, #eab308, #10b981, #38bdf8);
+            background-size: 300% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textRainbow 5s linear infinite;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        @keyframes textRainbow {
+            0% { background-position: 0% center; }
+            100% { background-position: 300% center; }
+        }
+
+        .brand p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: var(--success-glow);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--success);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .status-dot {
+            width: 5px;
+            height: 5px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .content {
+            padding: 20px 24px; /* Binawasan ang padding sa loob */
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px; /* Mas pinadikit ang pagitan */
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--panel-border);
+            padding: 12px 14px;
+            border-radius: 10px;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .info-value {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-family: 'JetBrains Mono', monospace;
+            word-break: break-all;
+        }
+
+        .selector-section {
+            margin-bottom: 14px;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .custom-select:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            background-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .custom-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-glow);
+        }
+
+        .custom-select option {
+            background-color: #12141c;
+            color: #f8fafc;
+            padding: 10px;
+        }
+
+        .link-card {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid var(--panel-border);
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .link-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
+        .link-info {
+            overflow: hidden;
+        }
+
+        .link-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 2px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .link-url {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn {
+            background: var(--primary-glow);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .notice-box {
+            background: rgba(56, 189, 248, 0.03);
+            border: 1px dashed rgba(56, 189, 248, 0.2);
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-top: 14px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .rainbow-text {
+            background: linear-gradient(90deg, #38bdf8, #a855f7, #ec4899, #eab308, #10b981, #38bdf8);
+            background-size: 300% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textRainbow 5s linear infinite;
+            font-weight: 700;
+        }
+
+        .footer {
+            padding: 14px 24px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        #toast {
+            visibility: hidden;
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid var(--primary);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <div class="loader-text">VIRGOZKI ENVOY CONFIG</div>
+    </div>
+
+    <div class="container" id="main-container">
+        <div class="header">
+            <div class="brand">
+                <h1>⚡ VIRGOZKI CONFIG PANEL ⚡</h1>
+                <p>ENVOY PROXY ENTERPRISE GATEWAY</p>
+            </div>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                SYSTEM ONLINE
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="section-title">Server Metrics</div>
+            <div class="grid-2">
+                <div class="info-card">
+                    <div class="info-label">NODE HOST / DOMAIN</div>
+                    <div class="info-value" id="current-host">Initializing...</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">SECURITY & PORT</div>
+                    <div class="info-value">TLS 1.3 / Port 443</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="selector-section">
+                    <div class="section-title">🔌 Bug Host / Address</div>
+                    <select id="address-select" class="custom-select" onchange="updateSelection()"></select>
+                </div>
+
+                <div class="selector-section">
+                    <div class="section-title">🛡️ SNI / Server Name Indicator</div>
+                    <select id="sni-select" class="custom-select" onchange="updateSelection()"></select>
+                </div>
+            </div>
+
+            <div class="section-title" style="margin-top: 4px;">Generated Config Links</div>
+            <div id="links-container"></div>
+
+            <div class="notice-box">
+                <span class="rainbow-text">NOTE:</span> Please choose your preferred Bug Host and SNI above, then click <b class="rainbow-text">Copy</b> to use the configuration link directly in your tunneling application.
+            </div>
+        </div>
+
+        <div class="footer">
+            <div>Engineered by <span class="rainbow-text">Virgozki</span></div>
+            <div class="rainbow-text">High-Performance Tunneling Core</div>
+        </div>
+    </div>
+
+    <div id="toast">Copied to clipboard successfully!</div>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                const container = document.getElementById('main-container');
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    container.classList.add('show');
+                }, 500);
+            }, 2500);
+        });
+
+        const host = window.location.host;
+        document.getElementById('current-host').innerText = host;
+
+        const uuid = "15f7e8ea-7b56-45d4-93af-31f3c592fdf1";
+        const password = "virgozki";
+
+        const addresses = [
+            "firebase.googleapis.com", "google.com", "firebase-settings.googleapis.com",
+            "payments.googleapis.com", "run.googleapis.com", "www.gstatic.com",
+            "dl.google.com", "connectivitycheck.gstatic.com", "fcm.googleapis.com",
+            "id.googleapis.com", "ssl.gstatic.com", "firebaseremoteconfigrealtime.googleapis.com",
+            "app-analytics-services.com", "firebase-settings.crashlytics.com",
+            "virgozki.googleapis.com", "chart.apis.google.com", "chat.google.com",
+            "mt0.googleapis.com", "vpn.googleapis.com", "redirector.gvt1.com",
+            "youtube.com", "googlevideo.com"
+        ];
+
+        const snis = [
+            "fcmtoken.googleapis.com", "api.paymaya.com", "support.maya.ph",
+            "firebase-settings.crashlytics.com", "firebaseinstallations.googleapis.com",
+            "fonts.googleapis.com", "virgozki.googleapis.com", "cdn-settings.appsflyersdk.com",
+            "benefits-client-production.voyagerapis.com", "firebaseremoteconfigrealtime.googleapis.com",
+            "app-analytics-services.com", "qa.iwanttfc.com", "help.iwanttfc.com",
+            "support.iwanttfc.com", "api.iwanttfc.com", "iwant-trailer.akamaized.net",
+            "youtube.com", "googlevideo.com", "api24-normal.tiktokv.com",
+            "api24-normal-alisg.tiktokv.com", "api24-normal-useast1a.tiktokv.com",
+            "tiktok.surf2sawa.org", "tiktok.com", "www.tiktok.com", "m.tiktok.com"
+        ];
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function initDropdowns() {
+            const addrSelect = document.getElementById('address-select');
+            addresses.forEach(addr => {
+                const opt = document.createElement('option');
+                opt.value = addr;
+                opt.innerText = addr;
+                addrSelect.appendChild(opt);
+            });
+
+            const sniSelect = document.getElementById('sni-select');
+            snis.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s;
+                opt.innerText = s;
+                sniSelect.appendChild(opt);
+            });
+        }
+
+        function updateSelection() {
+            generateLinks();
+        }
+
+        function generateLinks() {
+            const selectedAddress = document.getElementById('address-select').value;
+            const selectedSni = document.getElementById('sni-select').value;
+            const linksContainer = document.getElementById('links-container');
+            linksContainer.innerHTML = '';
+
+            const vless = `vless://${uuid}@${selectedAddress}:443?encryption=none&type=ws&path=/vless-ws&host=${host}&security=tls&sni=${selectedSni}#VLESS-WS-ENVOY`;
+            
+            const vmessJson = JSON.stringify({
+                v: "2", ps: "VMESS-WS-ENVOY", add: selectedAddress, port: "443",
+                id: uuid, aid: "0", scy: "auto", net: "ws", type: "none",
+                host: host, path: "/vmess-ws", tls: "tls", sni: selectedSni, fp: "chrome", alpn: "http/1.1"
+            });
+            const vmess = `vmess://${btoa(vmessJson)}`;
+
+            const trojan = `trojan://${password}@${selectedAddress}:443?type=ws&path=/trojan-ws&host=${host}&security=tls&sni=${selectedSni}#TROJAN-WS-ENVOY`;
+            
+            const ssBtoa = btoa(`aes-256-gcm:${password}`);
+            const ss = `ss://${ssBtoa}@${selectedAddress}:443?type=ws&path=/ss-ws&host=${host}&security=tls&sni=${selectedSni}#SS-WS-ENVOY`;
+
+            const links = [
+                { name: "VLESS WS", url: vless },
+                { name: "VMESS WS", url: vmess },
+                { name: "TROJAN WS", url: trojan },
+                { name: "SHADOWSOCKS WS", url: ss }
+            ];
+
+            links.forEach(l => {
+                linksContainer.innerHTML += `
+                    <div class="link-card">
+                        <div class="link-info">
+                            <div class="link-title">${l.name}</div>
+                            <div class="link-url">${l.url}</div>
+                        </div>
+                        <button class="btn" onclick="navigator.clipboard.writeText('${l.url}');showToast('Copied ${l.name} config!');">Copy</button>
+                    </div>
+                `;
+            });
+        }
+
+        initDropdowns();
+        generateLinks();
+    </script>
+</body>
+</html>
