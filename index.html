@@ -283,7 +283,6 @@
             position: relative;
         }
 
-        /* 100% Transparent Custom Dropdown List Style */
         .custom-dropdown {
             position: relative;
             width: 100%;
@@ -457,6 +456,24 @@
             gap: 8px;
         }
 
+        /* Sound Control Button Style */
+        .sound-btn {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .sound-btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
         #toast {
             visibility: hidden;
             position: fixed;
@@ -484,7 +501,7 @@
 </head>
 <body>
 
-    <!-- Background Video from Dropbox -->
+    <!-- Background Video with Audio Support -->
     <video autoplay muted loop playsinline id="bg-video">
         <source src="https://www.dropbox.com/scl/fi/5dlk7b7yzwuo157mugd3b/ssstik.io_1794830294163.mp4?rlkey=les66ys6ts8oj7nzfd1cjm4th&st=jsdtp07j&dl=1" type="video/mp4">
         Your browser does not support HTML5 video.
@@ -557,6 +574,9 @@
 
         <div class="footer">
             <div>Engineered by <span class="rainbow-text">VIRGOZKI</span></div>
+            <div>
+                <button id="sound-toggle" class="sound-btn" onclick="toggleSound()">🔇 Sound: OFF</button>
+            </div>
             <div class="rainbow-text">High-Performance Tunneling Core</div>
         </div>
     </div>
@@ -607,6 +627,21 @@
 
         let selectedAddressValue = addresses[0];
         let selectedSniValue = snis[0];
+
+        // Function para i-on/off ang sound ng video background
+        function toggleSound() {
+            const video = document.getElementById('bg-video');
+            const btn = document.getElementById('sound-toggle');
+            if (video.muted) {
+                video.muted = false;
+                btn.innerText = "🔊 Sound: ON";
+                showToast("Video Sound Enabled!");
+            } else {
+                video.muted = true;
+                btn.innerText = "🔇 Sound: OFF";
+                showToast("Video Sound Muted!");
+            }
+        }
 
         function showToast(message) {
             const toast = document.getElementById("toast");
